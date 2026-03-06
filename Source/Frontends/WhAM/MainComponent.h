@@ -59,7 +59,7 @@ private:
     juce::ImageButton headerLogoButton;
     juce::Label gitInfoLabel;
     CustomLookAndFeel customLookAndFeel;
-    juce::String gradioUrl { "http://127.0.0.1:7860/" };
+    juce::String gradioUrl { "https://anvitax-wham.hf.space/" };
     mutable juce::CriticalSection gradioSettingsLock;
     juce::Image whamLogoImage;
     juce::Image trimmedWhamLogoImage;

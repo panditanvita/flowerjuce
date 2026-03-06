@@ -159,10 +159,10 @@ juce::Result VampNetWorkerThread::callVampNetAPI(const juce::File& inputAudioFil
         DBG("VampNetWorkerThread: File uploaded successfully. Path: " + uploadedFilePath);
     }
 
-    // Step 2: Prepare JSON payload with all 18 parameters
+    // Step 2: Prepare JSON payload with all 24 parameters in Gradio component creation order
     juce::Array<juce::var> dataItems;
 
-    // [0] Input audio file
+    // [0] input_audio
     if (hasAudio)
     {
         juce::DynamicObject::Ptr fileObj = new juce::DynamicObject();
@@ -176,32 +176,37 @@ juce::Result VampNetWorkerThread::callVampNetAPI(const juce::File& inputAudioFil
     }
     else
     {
-        dataItems.add(juce::var());  // null for no audio
+        dataItems.add(juce::var());
     }
 
-    // VampNet parameters - use custom params if provided, otherwise use defaults
     juce::var paramsToUse = customParams.isObject() ? customParams : WhAM::LooperTrack::getDefaultVampNetParams();
 
     auto* obj = paramsToUse.getDynamicObject();
     if (obj != nullptr)
     {
-        dataItems.add(obj->getProperty("sample_temperature"));       // [1]
-        dataItems.add(obj->getProperty("top_p"));                   // [2]
-        dataItems.add(juce::var(static_cast<int>(periodicPrompt))); // [3] periodic prompt (from UI) - force convert to int
-        dataItems.add(obj->getProperty("mask_dropout"));            // [4]
-        dataItems.add(obj->getProperty("time_stretch_factor"));     // [5]
-        dataItems.add(obj->getProperty("onset_mask_width"));        // [6]
-        dataItems.add(obj->getProperty("typical_filtering"));       // [7]
-        dataItems.add(obj->getProperty("typical_mass"));            // [8]
-        dataItems.add(obj->getProperty("typical_min_tokens"));      // [9]
-        dataItems.add(obj->getProperty("seed"));                    // [10]
-        dataItems.add(obj->getProperty("model_choice"));            // [11]
-        dataItems.add(obj->getProperty("compression_prompt"));      // [12]
-        dataItems.add(obj->getProperty("pitch_shift_amount"));      // [13]
-        dataItems.add(obj->getProperty("sample_cutoff"));           // [14]
-        dataItems.add(obj->getProperty("sampling_steps"));          // [15]
-        dataItems.add(obj->getProperty("beat_mask_width"));         // [16]
-        dataItems.add(obj->getProperty("feedback_steps"));          // [17]
+        dataItems.add(juce::var(static_cast<int>(periodicPrompt)));  // [1]  periodic_p
+        dataItems.add(obj->getProperty("onset_mask_width"));         // [2]  onset_mask_width
+        dataItems.add(obj->getProperty("beat_mask_width"));          // [3]  beat_mask_width
+        dataItems.add(juce::var(false));                             // [4]  beat_mask_downbeats
+        dataItems.add(juce::var(9));                                 // [5]  n_mask_codebooks
+        dataItems.add(obj->getProperty("pitch_shift_amount"));       // [6]  pitch_shift_amt
+        dataItems.add(juce::var(1.0));                               // [7]  rand_mask_intensity
+        dataItems.add(juce::var(1));                                 // [8]  periodic_w
+        dataItems.add(juce::var(0));                                 // [9]  n_conditioning_codebooks
+        dataItems.add(obj->getProperty("time_stretch_factor"));      // [10] stretch_factor
+        dataItems.add(juce::var(0.0));                               // [11] prefix_s
+        dataItems.add(juce::var(0.0));                               // [12] suffix_s
+        dataItems.add(juce::var(1.5));                               // [13] masktemp
+        dataItems.add(obj->getProperty("sample_temperature"));       // [14] sampletemp
+        dataItems.add(obj->getProperty("top_p"));                    // [15] top_p
+        dataItems.add(obj->getProperty("typical_filtering"));        // [16] typical_filtering
+        dataItems.add(obj->getProperty("typical_mass"));             // [17] typical_mass
+        dataItems.add(obj->getProperty("typical_min_tokens"));       // [18] typical_min_tokens
+        dataItems.add(obj->getProperty("sample_cutoff"));            // [19] sample_cutoff
+        dataItems.add(juce::var(true));                              // [20] use_coarse2fine
+        dataItems.add(obj->getProperty("sampling_steps"));           // [21] num_steps
+        dataItems.add(obj->getProperty("mask_dropout"));             // [22] dropout
+        dataItems.add(obj->getProperty("seed"));                     // [23] seed
     }
 
     juce::DynamicObject::Ptr payloadObj = new juce::DynamicObject();
