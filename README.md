@@ -1,52 +1,36 @@
-# Neural Tape Looper 
+# WhAM Tape Looper
+
+A JUCE-based tape looper frontend for [WhAM (Whale Acoustics Model)](https://github.com/Project-CETI/wham). Records audio, sends it to a Gradio-hosted WhAM backend for whale coda generation, and plays back the result in a loop.
 
 ---
 
-## Quick Start
+## Quick Start (macOS)
 
-### Installation
+### Prerequisites
 
-#### Prerequisites
+- **CMake** 3.22+ (`brew install cmake`)
+- **Xcode Command Line Tools** (`xcode-select --install`)
 
-- **CMake** 3.22 or higher
-- **C++17** compatible compiler
-  - macOS: Xcode 12+
-  - Windows: Visual Studio 2019+
-  - Linux: GCC 9+ or Clang 10+
-- **JUCE Framework** (included as submodule)
+### Build & Run
 
-#### Setup
-
-1. **Clone the repository**
 ```bash
-git clone https://github.com/hugofloresgarcia/unsound-juce.git
-cd unsound-juce
-```
-
-2. **Initialize JUCE submodule**
-```bash
-git submodule update --init --recursive
-```
-
-3. **Build the project**
-
-**macOS/Linux:**
-```bash
+git clone --branch wham --recursive https://github.com/panditanvita/flowerjuce.git
+cd flowerjuce
 mkdir build && cd build
 cmake ..
 cmake --build . --config Release
+open "TapeLooper_artefacts/Tape Looper.app"
 ```
 
-**Windows:**
-```bash
-mkdir build && cd build
-cmake -G "Visual Studio 17 2022" ..
-cmake --build . --config Release
-```
+### Usage
 
-4. **Run**
-- macOS: `build/TapeLooper_artefacts/Release/Tape Looper.app`
-- Linux: `build/TapeLooper_artefacts/Release/Tape\ Looper`
-- Windows: `build\TapeLooper_artefacts\Release\Tape Looper.exe`
+1. Select **WhAM** from the startup dialog
+2. Enable mic input on a track (click the mic icon so it turns yellow)
+3. Arm recording (click **R**)
+4. Press **Play** to start recording
+5. Press **Play** again to stop and loop
+6. Click the whale button to send audio to the model and hear the generated coda
+
+The backend defaults to `https://anvitax-wham.hf.space/`. You can change the Gradio URL in Settings.
 
 ---
